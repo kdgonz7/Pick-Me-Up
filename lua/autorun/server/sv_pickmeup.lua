@@ -172,7 +172,7 @@ hook.Add("Tick", "MePickUpCheck", function()
 		-- initiate revive sequence
 		if posOfNpc:Distance(posOfDistress) <= ReviveDistance:GetInt() then
 			print(v.npc:GetCurrentSchedule())
-			if ReviveAgainstOdds:GetBool() && v.npc:GetCurrentSchedule() == SCHED_FORCED_GO then
+			if not ReviveAgainstOdds:GetBool() && v.npc:GetCurrentSchedule() == SCHED_FORCED_GO then
 				continue
 			end
 
