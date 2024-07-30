@@ -3,6 +3,9 @@
 
 Sound("npc/combine_soldier/gear4.wav")
 
+local ReviveDistance = CreateConVar("pickup_revive_distance", 30, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "How close do NPCs have to be to revive each other?")
+local SystemEnabled  = CreateConVar("pickup_system_enabled", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable the system?")
+
 CombineList = CombineList or {
 	NPCs = {},
 	Other = {},
@@ -109,6 +112,9 @@ local AllowedNPCs = {
 
 -- add the NPC to the pool
 hook.Add("OnEntityCreated", "PickMeUp_Add", function(ent)
+	if not IsValid(ent) then return end
+	if not SystemEnabled:GetBool() then return end
+
 	if AllowedNPCs[ent:GetClass()] then
 		print("[PickMeUp] Added " .. ent:GetClass())
 		Comb:AddNPC(ent)
@@ -118,6 +124,10 @@ end)
 
 -- when a entity dies, get it revived
 hook.Add("CreateEntityRagdoll", "PickMeUp_CreateEntityRagdoll", function(npc, rag)
+	if not IsValid(npc) then return end
+	if not IsValid(rag) then return end
+	if not SystemEnabled:GetBool() then return end
+
 	-- i realized after all this time, the system should've just been created in the CreateEntityRagdoll hook.
 	-- i'm so stupid.
 	local alreadyRevived = npc:GetNWBool("AlreadyRevived", false)
@@ -140,6 +150,10 @@ hook.Add("CreateEntityRagdoll", "PickMeUp_CreateEntityRagdoll", function(npc, ra
 end)
 
 hook.Add("Tick", "MePickUpCheck", function()
+	if not Comb.Revivers then return end
+	if #Comb.Revivers == 0 then return end
+	if not SystemEnabled:GetBool() then return end
+
 	for k, v in pairs(Comb.Revivers) do
 		if not IsValid(v.npc) then
 			table.remove(Comb.Revivers, k)
@@ -154,10 +168,14 @@ hook.Add("Tick", "MePickUpCheck", function()
 		local posOfNpc = v.npc:GetPos()
 		local posOfDistress = v.forwho
 
-		if posOfNpc:Distance(posOfDistress) <= 30 then
+		-- if the npc is near the one we need to help
+		-- initiate revive sequence
+		if posOfNpc:Distance(posOfDistress) <= ReviveDistance:GetInt() then
 			v.npc:SetSchedule(SCHED_IDLE_STAND)
 			v.npc:SetIdealActivity( ACT_CROUCHIDLE )
+
 			local seq = (v.npc:LookupSequence("pickup") != -1 && "pickup") or "combat_stand_to_crouch"
+
 			v.npc:StopMoving()
 			v.npc:ClearSchedule()
 			v.npc:AddGestureSequence( v.npc:LookupSequence(seq), true )
