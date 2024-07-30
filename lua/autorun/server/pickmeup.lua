@@ -14,16 +14,20 @@ function CombineList:Init()
 end
 
 function CombineList:AddNPC(ent)
+	if not IsValid(ent) then return end
 	table.insert(self.NPCs, ent)
 end
 
 -- Function to calculate the distance between two vectors
 local function VectorDistance(v1, v2)
+	if not v1 or not v2 then return end
+
 	return v1:DistToSqr(v2)
 end
 
 -- Function to get the closest Combine NPCs
 function CombineList:GetClosest(npc, depth)
+	if not npc then return end
 	depth = depth or 5
 
 	-- Table to store all Combine NPCs and their distances
