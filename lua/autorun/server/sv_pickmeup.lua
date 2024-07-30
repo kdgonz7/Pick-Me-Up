@@ -3,9 +3,9 @@
 
 Sound("npc/combine_soldier/gear4.wav")
 
-local ReviveDistance = CreateConVar("pickup_revive_distance", 40, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "How close do NPCs have to be to revive each other?")
-local SystemEnabled  = CreateConVar("pickup_system_enabled", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable the system?")
-local ReviveAgainstOdds = CreateConVar("pickup_revive_underfire", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Should NPCs try to revive their team even if they're being shot at?")
+local ReviveDistance = CreateConVar("pickup_revive_distance", 40, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "How close do NPCs have to be to revive each other?")
+local SystemEnabled  = CreateConVar("pickup_system_enabled", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Enable the system?")
+local ReviveAgainstOdds = CreateConVar("pickup_revive_underfire", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Should NPCs try to revive their team even if they're being shot at?")
 
 CombineList = CombineList or {
 	NPCs = {},

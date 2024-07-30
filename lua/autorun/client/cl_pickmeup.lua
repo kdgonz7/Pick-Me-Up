@@ -1,9 +1,9 @@
 hook.Add( "AddToolMenuCategories", "Cat", function()
-	spawnmenu.AddToolCategory( "Options", "NPC Revive System", "#NPC Revival" )
+	spawnmenu.AddToolCategory( "Options", "NPC Revive System", "#NPC Revive System" )
 end )
 
 hook.Add( "PopulateToolMenu", "Cat", function()
-	spawnmenu.AddToolMenuOption( "Options", "NPC Revive System", "NPCRevivalMenu", "#NPC Revival", "", "", function( panel )
+	spawnmenu.AddToolMenuOption( "Options", "NPC Revive System", "NPCRevivalMenu", "#NPC Revival Settings", "", "", function( panel )
 		local super = LocalPlayer():IsSuperAdmin()
 
 		panel:ClearControls()
