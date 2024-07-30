@@ -203,9 +203,11 @@ hook.Add("Tick", "MePickUpCheck", function()
 						e:SetModel(v.forwho_info.body:GetModel())
 						e:SetSkin(v.forwho_info.body:GetSkin())
 						e:SetPos(v.forwho_info.body:GetPos())
+
 						if v.forwho_info.citizentype then
 							e:SetSaveValue("citizentype", v.forwho_info.citizentype)
 						end
+
 						e:Give(v.forwho_info.weapon)
 
 						for i = 1, #v.forwho_info.body:GetBodyGroups() do
