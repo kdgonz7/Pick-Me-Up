@@ -5,6 +5,7 @@ Sound("npc/combine_soldier/gear4.wav")
 
 local ReviveDistance = CreateConVar("pickup_revive_distance", 30, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "How close do NPCs have to be to revive each other?")
 local SystemEnabled  = CreateConVar("pickup_system_enabled", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable the system?")
+local ReviveAgainstOdds = CreateConVar("pickup_revive_underfire", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Should NPCs try to revive their team even if they're being shot at?")
 
 CombineList = CombineList or {
 	NPCs = {},
@@ -24,7 +25,6 @@ end
 -- Function to calculate the distance between two vectors
 local function VectorDistance(v1, v2)
 	if not v1 or not v2 then return end
-
 	return v1:DistToSqr(v2)
 end
 
@@ -171,6 +171,10 @@ hook.Add("Tick", "MePickUpCheck", function()
 		-- if the npc is near the one we need to help
 		-- initiate revive sequence
 		if posOfNpc:Distance(posOfDistress) <= ReviveDistance:GetInt() then
+			if ReviveAgainstOdds:GetBool() && v.npc:GetCurrentSchedule() == SCHED_RANGE_ATTACK1 then
+				continue
+			end
+
 			v.npc:SetSchedule(SCHED_IDLE_STAND)
 			v.npc:SetIdealActivity( ACT_CROUCHIDLE )
 
