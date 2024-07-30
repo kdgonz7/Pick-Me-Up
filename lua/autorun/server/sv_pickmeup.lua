@@ -81,7 +81,7 @@ function CombineList:SetNPCToReviveAnother(npc, combine, body)
 	-- add reviver
 	local weap = combine:GetActiveWeapon()
 	if not IsValid(weap) then
-		weap = "weapon_pistol"
+		weap = "weapon_smg1"
 	else
 		weap = weap:GetClass()
 	end
@@ -171,7 +171,8 @@ hook.Add("Tick", "MePickUpCheck", function()
 		-- if the npc is near the one we need to help
 		-- initiate revive sequence
 		if posOfNpc:Distance(posOfDistress) <= ReviveDistance:GetInt() then
-			if ReviveAgainstOdds:GetBool() && v.npc:GetCurrentSchedule() == SCHED_RANGE_ATTACK1 then
+			print(v.npc:GetCurrentSchedule())
+			if ReviveAgainstOdds:GetBool() && v.npc:GetCurrentSchedule() == SCHED_FORCED_GO then
 				continue
 			end
 
