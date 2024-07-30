@@ -165,7 +165,11 @@ hook.Add("Tick", "MePickUpCheck", function()
 			continue
 		end
 
+		if not v.npc then continue end
 		local posOfNpc = v.npc:GetPos()
+
+		if v.forwho_info.body == nil then continue end
+
 		local posOfDistress = v.forwho_info.body:GetPos() -- use the position of the body instead
 
 		-- if the npc is near the one we need to help
