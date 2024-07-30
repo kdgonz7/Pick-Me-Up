@@ -14,6 +14,7 @@ hook.Add( "PopulateToolMenu", "Cat", function()
 		end
 
 		panel:CheckBox( "Enable NPC Revival", "pickup_system_enabled" )
+		panel:CheckBox( "Revive Under Fire", "pickup_revive_underfire" )
 		panel:NumSlider( "Revive Distance", "pickup_revive_distance", 0, 100, 0 )
 	end )
 end )
