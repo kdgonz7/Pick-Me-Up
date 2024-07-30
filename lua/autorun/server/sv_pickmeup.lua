@@ -3,7 +3,7 @@
 
 Sound("npc/combine_soldier/gear4.wav")
 
-local ReviveDistance = CreateConVar("pickup_revive_distance", 30, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "How close do NPCs have to be to revive each other?")
+local ReviveDistance = CreateConVar("pickup_revive_distance", 40, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "How close do NPCs have to be to revive each other?")
 local SystemEnabled  = CreateConVar("pickup_system_enabled", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Enable the system?")
 local ReviveAgainstOdds = CreateConVar("pickup_revive_underfire", 1, {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Should NPCs try to revive their team even if they're being shot at?")
 
@@ -166,12 +166,11 @@ hook.Add("Tick", "MePickUpCheck", function()
 		end
 
 		local posOfNpc = v.npc:GetPos()
-		local posOfDistress = v.forwho
+		local posOfDistress = v.forwho_info.body:GetPos() -- use the position of the body instead
 
 		-- if the npc is near the one we need to help
 		-- initiate revive sequence
 		if posOfNpc:Distance(posOfDistress) <= ReviveDistance:GetInt() then
-			print(v.npc:GetCurrentSchedule())
 			if not ReviveAgainstOdds:GetBool() && v.npc:GetCurrentSchedule() == SCHED_FORCED_GO then
 				continue
 			end
@@ -222,6 +221,16 @@ hook.Add("Tick", "MePickUpCheck", function()
 				end)
 			end)
 			table.remove(Comb.Revivers, k)
+		else
+			if v.npc:GetCurrentSchedule() != SCHED_FORCED_GO then
+				local bodyPos = v.forwho_info.body:GetPos()
+
+				v.npc:SetSaveValue("m_vecLastPosition", bodyPos)
+				v.npc:SetLastPosition(bodyPos)
+				v.npc:ClearSchedule()
+				v.npc:SetSchedule(SCHED_FORCED_GO)
+				v.npc:SetIdealActivity( ACT_RUN_CROUCH )
+			end
 		end
 	end
 end)
