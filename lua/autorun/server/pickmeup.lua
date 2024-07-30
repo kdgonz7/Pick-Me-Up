@@ -64,6 +64,9 @@ function CombineList:AddReviver(npc, forwho, entity_class, entity_model, entity_
 end
 
 function CombineList:SetNPCToReviveAnother(npc, combine, body)
+	if not npc then return end
+	if not combine then return end
+	if not body then return end
 	-- force npc to run to combine position
 	npc:SetLastPosition(body:GetPos())
 	npc:SetSaveValue("m_vecLastPosition", body:GetPos())
@@ -86,6 +89,8 @@ function CombineList:SetNPCToReviveAnother(npc, combine, body)
 end
 
 function CombineList:HasAReviver(npc)
+	if not npc then return false end
+
 	for k, v in pairs(Comb.Revivers) do
 		if v.npc == npc then
 			return false
@@ -95,15 +100,14 @@ function CombineList:HasAReviver(npc)
 end
 
 Comb = CombineList:Init()
+
+-- NPCs that are allowed to revive each other
 local AllowedNPCs = {
 	["npc_combine_s"] = true,
 	["npc_citizen"] = true,
 }
 
-local FocusCitizenType = {
-	["npc_citizen"] = true,
-}
-
+-- add the NPC to the pool
 hook.Add("OnEntityCreated", "PickMeUp_Add", function(ent)
 	if AllowedNPCs[ent:GetClass()] then
 		print("[PickMeUp] Added " .. ent:GetClass())
@@ -112,6 +116,7 @@ hook.Add("OnEntityCreated", "PickMeUp_Add", function(ent)
 	end
 end)
 
+-- when a entity dies, get it revived
 hook.Add("CreateEntityRagdoll", "PickMeUp_CreateEntityRagdoll", function(npc, rag)
 	-- i realized after all this time, the system should've just been created in the CreateEntityRagdoll hook.
 	-- i'm so stupid.
@@ -133,56 +138,6 @@ hook.Add("CreateEntityRagdoll", "PickMeUp_CreateEntityRagdoll", function(npc, ra
 		end
 	end
 end)
-
--- hook.Add("OnNPCKilled", 	"PickMeUp_OnNPCKilled", function(npc, attacker, inflictor)
--- 	-- add a separate body, copying the one that just died, so we have a reference to it
-
--- 	local alreadyRevived = npc:GetNWBool("AlreadyRevived", false)
-
--- 	if alreadyRevived then return end
--- 	-- hide original ragdoll
--- 	npc:Remove()
-
--- 	local ragBody = ents.Create("prop_ragdoll")
--- 	ragBody:SetPos(npc:GetPos())
--- 	ragBody:SetAngles(npc:GetAngles())
--- 	ragBody:SetModel(npc:GetModel())
--- 	ragBody:SetCollisionGroup(COLLISION_GROUP_NONE) -- Set collision group to debris
--- 	ragBody:PhysicsInit(SOLID_NONE) -- Remove solid properties
-
--- 	ragBody:SetSkin(npc:GetSkin())
--- 	for i = 1, #npc:GetBodyGroups() do
--- 		ragBody:SetBodygroup(i, npc:GetBodygroup(i))
--- 	end
--- 	ragBody:SetVelocity(npc:GetVelocity())
--- 	ragBody:Spawn()
-
--- 	for id = 1,ragBody:GetPhysicsObjectCount() do
--- 		local bone = ragBody:GetPhysicsObjectNum(id - 1)
--- 		if IsValid(bone) then
--- 				local pos,angle = npc:GetBonePosition(ragBody:TranslatePhysBoneToBone(id - 1))
--- 				bone:SetPos(pos)
--- 				bone:SetAngles(angle)
--- 				bone:AddVelocity(npc:GetVelocity())
-
--- 				ragBody:ManipulateBoneScale(id - 1,npc:GetManipulateBoneScale(id - 1))
--- 		end
--- 	end
-
--- 	if table.HasValue(Comb.NPCs, npc) then
--- 		local helper = Comb:GetClosest(npc, 5)
-
--- 		local randomGuy = helper[1]
-
--- 		if randomGuy then
--- 			Comb:SetNPCToReviveAnother(randomGuy, npc, ragBody)
--- 		end
-
--- 		if IsValid(npc:GetActiveWeapon()) then
--- 			npc:GetActiveWeapon():Remove()
--- 		end
--- 	end
--- end)
 
 hook.Add("Tick", "MePickUpCheck", function()
 	for k, v in pairs(Comb.Revivers) do
