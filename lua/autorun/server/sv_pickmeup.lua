@@ -172,7 +172,6 @@ hook.Add("Tick", "MePickUpCheck", function()
 		if v.forwho == nil then continue end
 		if v.forwho_info == nil then continue end
 
-		if not IsValid(v.forwho) then continue end
 		if not IsValid(v.forwho_info.body) then continue end
 		if not IsValid(v.npc) then continue end
 
