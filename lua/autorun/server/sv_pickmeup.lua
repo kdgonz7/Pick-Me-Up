@@ -128,6 +128,8 @@ hook.Add("CreateEntityRagdoll", "PickMeUp_CreateEntityRagdoll", function(npc, ra
 	if not IsValid(rag) then return end
 	if not SystemEnabled:GetBool() then return end
 
+	rag:SetModel(rag:GetModel())
+
 	-- i realized after all this time, the system should've just been created in the CreateEntityRagdoll hook.
 	-- i'm so stupid.
 	local alreadyRevived = npc:GetNWBool("AlreadyRevived", false)
@@ -209,7 +211,7 @@ hook.Add("Tick", "MePickUpCheck", function()
 					if (IsValid(v.npc)) then
 						local e = ents.Create(v.forwho_info.class)
 
-						e:SetModel(v.forwho_info.body:GetModel())
+						e:SetModel(v.forwho_info.model)
 						e:SetSkin(v.forwho_info.body:GetSkin())
 						e:SetPos(v.forwho_info.body:GetPos())
 
