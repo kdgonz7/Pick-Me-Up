@@ -177,6 +177,16 @@ hook.Add("Tick", "MePickUpCheck", function()
 		if not IsValid(v.forwho_info.body) then continue end
 		if not IsValid(v.npc) then continue end
 
+		for i = 1, v.forwho_info.body:GetBoneCount() do
+			-- thanks Limakenori for a fix
+			-- this prevents npcs from being revived with exploded 
+			-- and detached limbs lol
+			if v.forwho_info.body:GetManipulateBoneScale(i) != Vector(1, 1, 1) then
+				table.remove(Comb.Revivers, k)
+				continue
+			end
+		end
+
 		local posOfDistress = v.forwho_info.body:GetPos() -- use the position of the body instead
 
 		-- if the npc is near the one we need to help
